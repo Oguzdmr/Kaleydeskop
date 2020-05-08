@@ -1,0 +1,47 @@
+clear all
+im1=imread('C:\Users\GLL\Desktop\resim1.png');
+im2=imread('C:\Users\GLL\Desktop\resim2.png');
+
+
+
+sat=size(im1)*[1;0;0]
+sut=size(im1)*[0;1;0]
+centx=sut/2;
+centy=sat/2;
+
+for sayma=1:120
+alfa=sayma*pi/120;
+B=ones(sat,sut,3);
+B=B.*255;
+B=uint8(B);
+    for i=1:sat
+    for j=1:sut
+    orj=im1(i,j,:);
+	l=ceil(cos(alfa)*(j-centx)-sin(alfa)*(i-centy)+centx);
+    k=ceil(sin(alfa)*(j-centx)+cos(alfa)*(i-centy)+centy);
+	
+	
+         if ((k<=sat)&&(l<=sut))&&((k>=1)&&(l>=1))
+        B(k,l,:)=uint8(orj);
+        end 
+    end
+	
+    end
+	im3=B*0.5+im2*0.5;
+path='C:\Users\GLL\Desktop\kaleydeskop\images\'
+fname=sprintf('%simg%03d.jpg',path,sayma);
+imwrite(im3,fname);
+end
+path='C:\Users\GLL\Desktop\kaleydeskop\'
+imageNames = dir(fullfile(path,'images','*.jpg'));
+imageNames={imageNames.name}';
+
+outputVideo=VideoWriter(fullfile(path,'kaleydeskop.avi'));
+outputVideo.FrameRate=21;
+open(outputVideo)
+
+for ii=1:length(imageNames)
+	img = imread(fullfile('C:\Users\GLL\Desktop\kaleydeskop','images',imageNames{ii}));
+	writeVideo(outputVideo,img)
+end
+close(outputVideo)
